@@ -1,0 +1,20 @@
+# use glob syntax
+syntax: glob
+
+Debug/*.o
+Debug/*.d
+Debug/*.lss
+Debug/*.map
+Debug/*.elf
+Release/*.o
+Release/*.d
+Release/*.lss
+Release/*.map
+Release/*.elf
+Release/*.eep
+Release/*.hex
+
+syntax: glob
+Backup Of bloader.pdsbak
+bloader.pdsprj.*.workspace
+Last Loaded bloader.pdsbak
