@@ -10,16 +10,17 @@
 
 #include <avr/io.h>
 
-#ifndef F_CPU
+#if !defined(F_CPU)
 #define F_CPU 8000000
 #endif
 
-#ifndef BAUD
-#define BAUD 19200
+#if !defined(BAUD)
+#define BAUD 38400
 #endif
 
-// use utils/setbaud.h
-//#define UART_CALC_BAUDRATE (((F_CPU) + 8UL * (BAUD))  / (16UL * (BAUD)) - 1UL)
+#if !defined(SUPPORT_EEPROM)
+#define SUPPORT_EEPROM 1
+#endif
 
 #if !defined(SIGNATURE_0) && !defined(SIGNATURE_1) && !defined(SIGNATURE_2)
 #	error "No definition for MCU!"
@@ -41,17 +42,17 @@ typedef uint16_t pagebuf_t;
 typedef uint8_t pagebuf_t;
 #endif
 
-#ifndef BOOTSIZE
+#if !defined(BOOTSIZE)
 #define BOOTSIZE 512	// 512 words (1024 bytes)
 #endif
 
 #define APP_END (FLASHEND - (BOOTSIZE * 2))
 
-#ifndef WAIT_TIME
+#if !defined(WAIT_TIME)
 #define WAIT_TIME 100 // Wait WAIT_TIME * 10ms, by default 1000ms = 1s
 #endif
 
-#ifndef WAIT_CHAR
+#if !defined(WAIT_CHAR)
 #define WAIT_CHAR 'S'
 #endif
 

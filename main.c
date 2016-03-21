@@ -9,11 +9,11 @@
 #define VERSION_MINOR '1'
 
 #define BAUD 38400
-#define WAIT_TIME 200 // 2.0s
+#define WAIT_TIME 250 // 2.5s
 
 #define BOOTSIZE 512
 
-//#define SUPPORT_EEPROM
+#define SUPPORT_EEPROM 0
 
 #include "hal.h"
 
@@ -22,6 +22,7 @@
 #include <avr/boot.h>
 #include <avr/eeprom.h>
 #include <avr/pgmspace.h>
+#include <avr/wdt.h>
 
 #include <util/delay.h>
 #include <util/setbaud.h>
@@ -44,13 +45,13 @@ int main(void) __attribute__((OS_main,section(".init9")));
 
 static void (*jump_to_app)(void) = 0x0000;
 
-static void uart_sendchar(uint8_t data)
+static inline void uart_sendchar(uint8_t data)
 {
 	while (!(UCSRA & (1<<UDRE)));
 	UDR = data;
 }
 
-static uint8_t uart_recvchar(void)
+static inline uint8_t uart_recvchar(void)
 {
 	while (!(UCSRA & (1<<RXC)));
 	return UDR;
@@ -131,7 +132,7 @@ static inline uint16_t read_flash_page(uint16_t addr, pagebuf_t size)
 	return byte_addr >> 1;
 }
 
-#if defined(SUPPORT_EEPROM)
+#if defined(SUPPORT_EEPROM) && (SUPPORT_EEPROM == 1)
 
 static inline uint16_t write_eeprom_page(uint16_t addr, pagebuf_t size)
 {
@@ -179,6 +180,10 @@ static inline void erase_flash(void)
 
 int main(void)
 {
+	// disable watchdog
+	wdt_disable();
+
+	// disable interrupts
 	cli();
 
 	UBRRH = UBRRH_VALUE;
@@ -250,7 +255,7 @@ int main(void)
 				{
 					addr = write_flash_page(addr, size);
 				}
-#if defined(SUPPORT_EEPROM)
+#if defined(SUPPORT_EEPROM) && SUPPORT_EEPROM == 1
 				else if (val == 'E')
 				{
 					addr = write_eeprom_page(addr, size);
@@ -274,7 +279,7 @@ int main(void)
 			{
 				addr = read_flash_page(addr, size);
 			}
-#if defined(SUPPORT_EEPROM)
+#if defined(SUPPORT_EEPROM) && SUPPORT_EEPROM == 1
 			else if (val == 'E')
 			{
 				addr = read_eeprom_page(addr, size);
