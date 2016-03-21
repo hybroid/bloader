@@ -13,7 +13,8 @@ Release/*.map
 Release/*.elf
 Release/*.eep
 Release/*.hex
-
+Release/*.bak
+Debug/*.bak
 syntax: glob
 Backup Of bloader.pdsbak
 bloader.pdsprj.*.workspace
